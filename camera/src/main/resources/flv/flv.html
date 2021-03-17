@@ -1,0 +1,102 @@
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="flv.js-master\demo\demo.css">
+    <script typet="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/flv.js/1.5.0/flv.min.js"></script>
+</head>
+<body>
+ 
+        <video id="videoElement" width="100%" controls></video>
+        <script>
+            function f(type,url) {
+ 
+                    if (flvjs.isSupported()) {
+                        var videoElement = document.getElementById('videoElement');
+                        var flvPlayer = flvjs.createPlayer({
+                            type: type,
+                            url: url,
+                        });
+                        flvPlayer.attachMediaElement(videoElement);
+                        flvPlayer.load();
+                        flvPlayer.play();
+								
+	
+                    }
+                
+               
+            }
+			
+
+		function getvideoprogress() {
+		setTimeout(function () {
+		var vid = document.getElementById("videoElement");
+		var currentTime=vid.currentTime
+		var currentTime_toFixed=vid.currentTime.toFixed(1);
+		
+	
+
+
+		getvideoprogress();
+		}, 50);
+		}
+        </script>
+    <div class="tvlist" >
+            <div style="text-align:center;font-size:18px;width:100%;background:#333;line-height:44px;margin-bottom:1px;color:#fff;margin: 0 auto">请选择分集</div>
+            <div class="tvlistbox">
+                <script type="text/javascript">
+                    /*视频名称*/
+                    var videoTitle = "视频1|视频2|视频3";
+                    var titleList = videoTitle.split("|");
+                    for (var i = 0; i < titleList.length; i++){
+                        if(titleList[i] != ""){
+                            document.write('<a class="col-md-4 btn btn-default" data-code="'+i+'" onclick="javascript:changeStream('+i+');">'+titleList[i]+'</a>');
+                        }
+                    }
+                    /*视频链接*/
+                    var CuPlayerList ="http://localhost:8311/flv/getVideo";
+                    var sp =CuPlayerList.split("|")
+                    var _ext =sp[0].split(".").pop();
+ 
+                    if(sp.length<=0){
+                        alert('没有视频！');
+                        history.back();
+                    }else {
+                        $(".tvlistbox a").each(function (index) {
+                            if(index==0){
+                                $(this).css("background","#c7402a");
+                            }else{
+                                $(this).css("background","#eee");
+                            }
+ 
+                        })
+                        f(_ext,sp[0]);
+                    }
+ 
+                    function changeStream(i){
+                        $(".tvlistbox a").each(function (index) {
+                            //console.log(index);
+                            if(index==i){
+                                $(this).css("background","#c7402a");
+                            }else{
+                                $(this).css("background","#eee");
+                            }
+ 
+                        })
+                        var ext =sp[i].split(".").pop();
+                        f(ext,sp[i]);
+                    }
+                </script>
+            </div>
+        </div>
+ 
+</body>
+</html>
