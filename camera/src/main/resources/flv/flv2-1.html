@@ -61,23 +61,26 @@
         if (flvjs.isSupported()) {
             var flvPlayer = flvjs.createPlayer({
                 type: 'mp4',
-                url: 'http://www.tbshuda.com.cn/camera/flv/getVideo?token=abcdefgrrrwsdfsdf'
+                url: 'http://localhost:8311/flv/getVideo?token=abcdefgrrrwsdfsdf'
             });
             flvPlayer.attachMediaElement(videoElement);
             flvPlayer.load(); //加载
 
             var t2 = window.setInterval(function() {
-
                 console.log("心跳",head++)
-                if(head==1){
+                if(head==10){
                     window.clearInterval(t2);
                 }
                 $.ajax({
-                    url:"http://www.tbshuda.com.cn/camera/flv/video/abcdefgrrrwsdfsdf",/*url写异域的请求地址*/
+                    url:"http://localhost:8311/flv/video/abcdefgrrrwsdfsdf",/*url写异域的请求地址*/
                     type:"get",
                     dataType:"jsonp",/*加上datatype*/
-                    success:function(response){
-                        console.log("保活成功",response)
+                    jsonpCallback:"cb",/*设置一个回调函数，名字随便取，和下面的函数里的名字相同就行*/
+                    success:function(){
+                        console.log("保活成功")
+                    },
+                    error(){
+                        console.log("保活失败")
                     }
                 });
 

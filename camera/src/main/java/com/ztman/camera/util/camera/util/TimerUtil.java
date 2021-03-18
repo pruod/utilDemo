@@ -3,6 +3,7 @@ package com.ztman.camera.util.camera.util;
 import com.ztman.camera.controller.CameraController;
 import com.ztman.camera.util.camera.cache.CacheUtil;
 import com.ztman.camera.util.camera.pojo.Config;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,9 @@ import java.text.SimpleDateFormat;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Title TimerUtil.java
@@ -28,16 +32,13 @@ public class TimerUtil implements CommandLineRunner {
 	@Autowired
 	private Config config;// 配置文件bean
 
-	public static Timer timer;
+	private ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(4, new BasicThreadFactory.Builder().namingPattern("example-schedule-pool-%d").daemon(true).build());
+
 	@Override
 	public void run(String... args) throws Exception {
-		// 超过5分钟，结束推流
-		timer = new Timer("timeTimer");
-		timer.schedule(new TimerTask() {
+		executorService.scheduleAtFixedRate(new Runnable() {
 			@Override
 			public void run() {
-//				logger.info("******   执行定时任务       BEGIN   ******");
-
 				// 管理缓存
 				if (null != CacheUtil.STREAMMAP && 0 != CacheUtil.STREAMMAP.size()) {
 					Set<String> keys = CacheUtil.STREAMMAP.keySet();
@@ -72,9 +73,9 @@ public class TimerUtil implements CommandLineRunner {
 							e.printStackTrace();
 						}
 					}
+
 				}
-//				logger.info("******   执行定时任务       END     ******");
 			}
-		}, 1, 1000 * 60);
+		}, 1, 1, TimeUnit.MINUTES);
 	}
 }

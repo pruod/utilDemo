@@ -3,6 +3,7 @@ package com.ztman.camera.util.camera.util;
 import com.ztman.camera.controller.flvController;
 import com.ztman.camera.util.camera.cache.CacheUtil;
 import com.ztman.camera.util.camera.pojo.Config;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,10 @@ import java.text.SimpleDateFormat;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Title TimerUtil.java
@@ -27,18 +32,12 @@ public class TimerVideoUtil implements CommandLineRunner {
 	private final static Logger logger = LoggerFactory.getLogger(TimerVideoUtil.class);
 	@Autowired
 	private Config config;// 配置文件bean
-
-	public static Timer timer;
+	private ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(4, new BasicThreadFactory.Builder().namingPattern("example-schedule-pool-%d").daemon(true).build());
 	@Override
 	public void run(String... args) throws Exception {
-		// 超过5秒，结束推流
-		timer = new Timer("timerVideoUtil");
-		timer.schedule(new TimerTask() {
+		executorService.scheduleAtFixedRate(new Runnable() {
 			@Override
 			public void run() {
-//				logger.info("******   执行定时任务  timerVideoUtil      BEGIN   ******");
-
-				// 管理缓存
 				if (null != CacheUtil.START_VIDEO_MAP && 0 != CacheUtil.START_VIDEO_MAP.size()) {
 					Set<String> keys = CacheUtil.START_VIDEO_MAP.keySet();
 					System.out.println(keys);
@@ -77,8 +76,8 @@ public class TimerVideoUtil implements CommandLineRunner {
 					}
 
 				}
-//				logger.info("******   执行定时任务   timerVideoUtil    END     ******");
 			}
-		}, 1, 1000 );
+		}, 1, 1, TimeUnit.SECONDS);
+
 	}
 }

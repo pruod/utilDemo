@@ -6,6 +6,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.4.1</version>
+        <relativePath/>
     </parent>
     <groupId>com.ztman</groupId>
     <artifactId>camera</artifactId>
@@ -51,7 +52,10 @@
             <artifactId>javase</artifactId>
             <version>3.3.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -85,6 +89,11 @@
             <artifactId>ffmpeg-platform</artifactId>
             <version>4.2.1-1.5.2</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -95,29 +104,28 @@
                 <configuration>
                     <mainClass>com.ztman.camera.CameraApplication</mainClass>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>uber-jar</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <finalName>${project.artifactId}-${project.version}-jar-with-dependencies</finalName>
+                            <filters>
+                                <filter>
+                                    <artifact>*:* </artifact>
+                                    <excludes>
+                                        <exclude>LICENSE</exclude>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
-
-        <resources>
-            <!-- 打包时将jsp文件拷贝到META-INF目录下-->
-            <resource>
-                <!-- 指定resources插件处理哪个目录下的资源文件 -->
-                <directory>src/main/webapp</directory>
-                <!--注意此次必须要放在此目录下才能被访问到-->
-                <targetPath>META-INF/resources</targetPath>
-                <includes>
-                    <include>**/**</include>
-                </includes>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <includes>
-                    <include>**/**</include>
-                </includes>
-                <filtering>false</filtering>
-            </resource>
-        </resources>
-        <finalName>${project.artifactId}</finalName>
     </build>
     <properties>
         <!--自定义默认的编码格式-->

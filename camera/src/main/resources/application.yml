@@ -1,0 +1,9 @@
+server:
+  port: 8311
+config:
+  keepalive: 5
+  push_host: 127.0.0.1
+  host_extra: 127.0.0.1
+  push_port: 1935
+  main_code: 5120
+  sub_code: 1024
